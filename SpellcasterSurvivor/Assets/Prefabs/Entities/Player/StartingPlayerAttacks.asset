@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3fe308be9a93754699218b287e63b7b, type: 3}
+  m_Name: StartingPlayerAttacks
+  m_EditorClassIdentifier: 
+  _attacks:
+  - {fileID: 2108541937545015628, guid: 7a6e2df74d969464792b9c70a593e522, type: 3}
+  - {fileID: 2108541937545015628, guid: 2aeec5d6ce9b596469dffaeb86321c15, type: 3}
+  - {fileID: 2108541937545015628, guid: 28c94775e7ce46449be756d431dc959e, type: 3}
+  - {fileID: 2108541937545015628, guid: 6c167413d7268f7418653d6b07a5d6ae, type: 3}
