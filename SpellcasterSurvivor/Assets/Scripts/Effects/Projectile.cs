@@ -21,4 +21,12 @@ public class Projectile : Effect
             Destroy(gameObject);
         }
     }
+
+    public override void SetData(EffectData effectData)
+    {
+        if (effectData.speed != 0)
+            _speed = effectData.speed;
+        
+        base.SetData(effectData);
+    }
 }

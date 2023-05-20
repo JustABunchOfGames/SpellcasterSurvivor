@@ -44,8 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28883379b1fea754b9e2093f12fac848, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _key: 3
-  _onCastEffects:
-  - {fileID: 6733928856138256361, guid: 4b8edd6af521d60439f2ab6e4555872f, type: 3}
-  _manaCost: 30
-  _cooldown: 10
+  _data: {fileID: 11400000, guid: e5cc8988f61a6c942ba9f9dbe9c05393, type: 2}
+  _onCastEffects: []
+  _manaCost: 0
+  _cooldown: 0

@@ -9,9 +9,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _initialGravity = 1;
-    private float _gravity;
+    [SerializeField] private float _gravity;
     
-
     [SerializeField] private bool _isGrounded;
 
     private Vector3 _camRotation;
@@ -31,20 +30,11 @@ public class PlayerMovement : MonoBehaviour
         _gravity = _initialGravity;
     }
 
-    void Update()
+    private void Update()
     {
         Move();
         Rotate();
     }
-
-    /*
-    private void FixedUpdate()
-    {
-        // Add gravity on a less variable way (but less smooth too)
-        _moveDirection.y -= _gravity * Time.deltaTime;
-        _characterController.Move(_moveDirection * Time.deltaTime);
-    }
-    */
 
     private void Rotate()
     {
@@ -60,7 +50,12 @@ public class PlayerMovement : MonoBehaviour
     {
         _isGrounded = _characterController.isGrounded;
 
-        
+        // Move on horizontal axis
+        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        move = transform.TransformDirection(move);
+        _characterController.Move(move * _speed * Time.deltaTime);
+
+        // Maintain grvaity on ground
         if (_isGrounded)
         {
             // Reset gravity once on ground (if it was modified earlier)
@@ -71,11 +66,6 @@ public class PlayerMovement : MonoBehaviour
             if (_moveDirection.y < 0)
                 _moveDirection.y = 0;
         }
-
-        // Move on horizontal axis
-        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        move = transform.TransformDirection(move);
-        _characterController.Move(move * _speed * Time.deltaTime);
 
         // Jump (if not flying)
         if (Input.GetButtonDown("Jump") && _initialGravity == _gravity && _moveDirection.y <= 0 && _moveDirection.y >= -0.5f)
@@ -91,6 +81,8 @@ public class PlayerMovement : MonoBehaviour
     public void Fly(float jumpforce, float gravity)
     {
         _gravity = gravity;
+        _moveDirection.y = 0;
         _moveDirection.y += _jumpForce;
+        _characterController.Move(_moveDirection * Time.deltaTime);
     }
 }

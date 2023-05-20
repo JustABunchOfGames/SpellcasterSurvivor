@@ -14,12 +14,21 @@ public class Explosion : Effect
 
     private void FixedUpdate()
     {
-        base.Update();
-
         // Testing only X bacause it's scaling everything at once anyway
         if (transform.localScale.x < _maxScale)
         {
             transform.localScale += _scalePerFrame;
         }
+    }
+
+    public override void SetData(EffectData effectData)
+    {
+        if (effectData.scalePerFrame != Vector3.zero)
+            _scalePerFrame = effectData.scalePerFrame;
+
+        if (effectData.maxScale != 0)
+            _maxScale = effectData.maxScale;
+
+        base.SetData(effectData);
     }
 }

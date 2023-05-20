@@ -2,26 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public enum EffectTrigger
-{
-    OnCast,
-    OnHit,
-    OnDestruct
-}
-
 public class Effect : MonoBehaviour
 {
     public int damage;
-    public EffectTrigger trigger;
 
     [SerializeField] private float _timeBeforeDestruct;
 
-    [SerializeField] private List<Effect> _onHitEffects = new List<Effect>();
-    [SerializeField] private List<Effect> _onDestructEffects = new List<Effect>();
-
     protected Rigidbody _rigidbody;
     private float _timer;
+
+    private EffectData _effectData;
 
     protected void Awake()
     {
@@ -43,9 +33,13 @@ public class Effect : MonoBehaviour
         if (collision.collider.tag != "Enemy")
             return;
 
-        foreach (Effect effectPrefab in _onHitEffects)
+        Enemy enemy = collision.collider.GetComponent<Enemy>();
+        enemy.TakeDamage(damage);
+
+        foreach (EffectData effectData in _effectData.onHitEffects)
         {
-            Effect effect = Instantiate(effectPrefab, transform.position, Quaternion.identity);
+            Effect effect = Instantiate(effectData.effectPrefab, transform.position, Quaternion.identity);
+            effect.SetData(effectData);
             effect.TriggerEffect();
         }
     }
@@ -56,18 +50,23 @@ public class Effect : MonoBehaviour
         if (other.tag != "Enemy")
             return;
 
-        foreach (Effect effectPrefab in _onHitEffects)
+        Enemy enemy = other.GetComponent<Enemy>();
+        enemy.TakeDamage(damage);
+
+        foreach (EffectData effectData in _effectData.onHitEffects)
         {
-            Effect effect = Instantiate(effectPrefab, transform.position, Quaternion.identity);
+            Effect effect = Instantiate(effectData.effectPrefab, transform.position, Quaternion.identity);
+            effect.SetData(effectData);
             effect.TriggerEffect();
         }
     }
 
     protected void Destruct()
     {
-        foreach (Effect effectPrefab in _onDestructEffects)
+        foreach (EffectData effectData in _effectData.onDestructEffects)
         {
-            Effect effect = Instantiate(effectPrefab, transform.position, Quaternion.identity);
+            Effect effect = Instantiate(effectData.effectPrefab, transform.position, Quaternion.identity);
+            effect.SetData(effectData);
             effect.TriggerEffect();
         }
 
@@ -79,13 +78,12 @@ public class Effect : MonoBehaviour
 
     }
 
-    public void AddOnHitEffect(Effect effect)
+    public virtual void SetData(EffectData effectData)
     {
-        _onHitEffects.Add(effect);
-    }
+        damage = effectData.damage;
+        _timeBeforeDestruct = effectData.lifeTime;
 
-    public void AddOnDestructEffect(Effect effect)
-    {
-        _onDestructEffects.Add(effect);
+        // Save for other effects later
+        _effectData = effectData;
     }
 }

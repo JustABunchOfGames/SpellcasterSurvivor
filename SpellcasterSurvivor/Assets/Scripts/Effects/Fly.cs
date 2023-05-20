@@ -19,4 +19,11 @@ public class Fly : Effect
     {
         _playerMovement.Fly(_jumpforce, _gravity);
     }
+
+    public override void SetData(EffectData effectData)
+    {
+        _jumpforce = effectData.jumpforce;
+        _gravity = effectData.gravity;
+        base.SetData(effectData);
+    }
 }

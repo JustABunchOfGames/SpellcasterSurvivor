@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class GiveManaBack : Effect
 {
-    [SerializeField] private int _manaGiven;
-
     [SerializeField] private Player _player;
+
+    [SerializeField] private int _manaGiven;
 
     private new void Awake()
     {
@@ -18,5 +18,11 @@ public class GiveManaBack : Effect
     {
         // negative value to give mana, not to use it
         _player.UseMana(_manaGiven * (-1));
+    }
+
+    public override void SetData(EffectData effectData)
+    {
+        _manaGiven = effectData.statGiven;
+        base.SetData(effectData);
     }
 }

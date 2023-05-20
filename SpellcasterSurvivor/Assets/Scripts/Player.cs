@@ -4,15 +4,24 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private int maxMana;
-    [SerializeField] private int mana;
+    [SerializeField] private int _hp = 1;
+
+    [SerializeField] private int _maxMana;
+    [SerializeField] private int _mana;
     
     // Scriptable for attacks
     [SerializeField] private PlayerAttacks _currentAttacks;
     
     private List<Attack> _attackList = new List<Attack>();
 
-    private void Start()
+    private StateManager _stateManager;
+
+    private void Awake()
+    {
+        
+    }
+
+    public void InitAttack()
     {
         // Clear existing list
         _attackList.Clear();
@@ -22,49 +31,89 @@ public class Player : MonoBehaviour
         attacks = _currentAttacks.GetAttacks();
 
         // Instantiate those attacks for usage
-        for(int i = 0; i < attacks.Count; i++)
+        for (int i = 0; i < attacks.Count; i++)
         {
             _attackList.Add(Instantiate(attacks[i], this.transform));
         }
     }
 
-    void Update()
+    public void SetStateManager(StateManager stateManager)
     {
+        _stateManager = stateManager;
+    }
+
+    private void Update()
+    {
+        if (StateManager.gameIsPaused)
+            return;
+
         if (Input.GetButton("Attack1"))
         {
-            _attackList[0].DoEffects(this, Camera.main.transform);
+            Attack(0);
         }
 
         if (Input.GetButton("Attack2"))
         {
-            _attackList[1].DoEffects(this, Camera.main.transform);
+            Attack(1);
         }
 
         if(Input.GetButton("Attack3"))
         {
-            _attackList[2].DoEffects(this, Camera.main.transform);
+            Attack(2);
         }
 
         if (Input.GetButton("Attack4"))
         {
-            _attackList[3].DoEffects(this, Camera.main.transform);
+            Attack(3);
         }
+    }
+
+    private void Attack(int index)
+    {
+        // Passing Player for manaCost
+        // Passing Camera transform (linked to the player) to cast from self (either to ray from player or cast a projectile)
+        // Camera has the Position/Rotation
+        _attackList[index].DoEffects(this, Camera.main.transform);
     }
 
     // Used by attacks to drain mana, but can be used by effects to give mana back with negative values
     public void UseMana(int manaUsed)
     {
-        mana -= manaUsed;
+        _mana -= manaUsed;
 
-        if (mana < 0)
-            mana = 0;
+        if (_mana < 0)
+            _mana = 0;
 
-        if (mana > maxMana)
-            mana = maxMana;
+        if (_mana > _maxMana)
+            _mana = _maxMana;
     }
 
     public int GetMana()
     {
-        return mana;
+        return _mana;
+    }
+
+    public int GetMaxMana()
+    {
+        return _maxMana;
+    }
+
+    public void TakeHit()
+    {
+        _hp--;
+
+        if (_hp <= 0)
+            Die();
+    }
+
+    private void Die()
+    {
+        _stateManager.Defeat();
+    }
+
+    // Pass Attacks to the UIManager
+    public List<Attack> GetAttacks()
+    {
+        return _attackList;
     }
 }

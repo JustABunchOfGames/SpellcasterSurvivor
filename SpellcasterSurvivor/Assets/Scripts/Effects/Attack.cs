@@ -1,57 +1,64 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Key
+[Serializable]
+public class Cooldown
 {
-    LeftClick,
-    RightClick,
-    E,
-    R
+    public float cooldown;
+    public float timer;
+    public bool canCast;
+
+    public Cooldown(float cooldown)
+    {
+        this.cooldown = cooldown;
+        timer = cooldown;
+        canCast = true;
+    }
 }
+
 public class Attack : MonoBehaviour
 {
-    [SerializeField] private Key _key;
+    [SerializeField] private AttackData _data;
 
-    [SerializeField] private List<Effect> _onCastEffects;
+    // [SerializeField] private List<Effect> _onCastEffects;
 
-    [SerializeField] private int _manaCost;
+    private int _manaCost;
+    private float _cooldown;
 
-    [SerializeField] private float _cooldown;
-    private float _timer = 0f;
-    private bool _canCast = true;
+    private float _timer;
+    private bool _canCast;
 
-    private void FixedUpdate()
+    private Cooldown _attackCooldown;
+
+    private void Awake()
     {
-        _timer += Time.deltaTime;
+        SetData();
 
-        if (_timer >= _cooldown)
+        _timer = _cooldown;
+        _canCast = true;
+
+        _attackCooldown = new Cooldown(_cooldown);
+    }
+
+    private void Update()
+    {
+        if (!_canCast)
+            _timer -= Time.deltaTime;
+
+        if (_timer <= 0)
         {
-            _timer = 0f;
+            _timer = _cooldown;
             _canCast = true;
         }
+
+        _attackCooldown.timer = _timer;
+        _attackCooldown.canCast = _canCast;
     }
 
-    // Used by effects to increase/decrease manaCost
-    public void ReduceManaCost(int mana)
+    public Cooldown GetAttackCooldown()
     {
-        _manaCost -= mana;
-
-        if (_manaCost < 0)
-            _manaCost = 0;
-    }
-
-    public void ReduceCooldown(float cd)
-    {
-        _cooldown -= cd;
-
-        if (_cooldown < 0)
-            _cooldown = 0;
-    }
-
-    public Key GetKey()
-    {
-        return _key;
+        return _attackCooldown;
     }
 
     public void DoEffects(Player player, Transform target)
@@ -62,39 +69,18 @@ public class Attack : MonoBehaviour
             _canCast = false;
             player.UseMana(_manaCost);
 
-            foreach (Effect effectPrefab in _onCastEffects)
+            foreach (EffectData effectData in _data.onCastEffects)
             {
-                Effect effect = Instantiate(effectPrefab, target.position, target.rotation);
+                Effect effect = Instantiate(effectData.effectPrefab, target.position, target.rotation);
+                effect.SetData(effectData);
                 effect.TriggerEffect();
             }
         }
     }
 
-    public void AddEffect(Effect effect, int index)
+    private void SetData()
     {
-        if(effect.trigger == EffectTrigger.OnHit)
-            _onCastEffects[index].AddOnHitEffect(effect);
-        
-        if (effect.trigger == EffectTrigger.OnDestruct)
-            _onCastEffects[index].AddOnDestructEffect(effect);
-    }
-
-    public void AddEffect(Effect effect)
-    {
-        if (effect.trigger == EffectTrigger.OnHit)
-        {
-            foreach (Effect onCastEffect in _onCastEffects)
-            {
-                onCastEffect.AddOnHitEffect(effect);
-            }
-        }
-
-        if (effect.trigger == EffectTrigger.OnDestruct)
-        {
-            foreach (Effect onCastEffect in _onCastEffects)
-            {
-                onCastEffect.AddOnDestructEffect(effect);
-            }
-        }
+        _manaCost = _data.manaCost;
+        _cooldown = _data.cooldown;
     }
 }
