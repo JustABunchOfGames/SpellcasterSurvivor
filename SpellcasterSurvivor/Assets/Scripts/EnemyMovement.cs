@@ -21,15 +21,21 @@ public class EnemyMovement : MonoBehaviour
         // Moving torwards the player
         if (_target != null)
         {
-            Vector3 position = Vector3.MoveTowards(transform.position, _target.position, _speed * Time.deltaTime);
-            position.y = _height; // Enemies don't fly
-            transform.position = position;
+            Move();
         }
 
-        // Applying gravity manually (because it has a minim height)
+        // Applying gravity manually (because it has a minimum height but can't fly)
         Gravity();
     }
 
+    private void Move()
+    {
+        Vector3 move = Vector3.MoveTowards(transform.position, _target.position, _speed * Time.deltaTime);
+        move.y = _height;
+        transform.position = move;
+    }
+    
+    
     private void Gravity()
     {
         if (transform.position.y > _height)
@@ -37,4 +43,5 @@ public class EnemyMovement : MonoBehaviour
             transform.position = new Vector3(transform.position.x, transform.position.y - (_gravity * Time.deltaTime), transform.position.z);
         }
     }
+    
 }

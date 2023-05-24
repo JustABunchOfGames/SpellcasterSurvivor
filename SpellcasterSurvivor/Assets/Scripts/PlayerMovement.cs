@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private CharacterController _characterController;
+    private CharacterController _characterController;
 
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
@@ -26,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        _characterController = GetComponent<CharacterController>();
         _cam = Camera.main.transform;
         _gravity = _initialGravity;
     }

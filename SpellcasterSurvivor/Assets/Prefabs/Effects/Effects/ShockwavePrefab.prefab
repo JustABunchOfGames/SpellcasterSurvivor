@@ -131,12 +131,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  trigger: 0
   _timeBeforeDestruct: 3
-  _onHitEffects: []
-  _onDestructEffects: []
   _scalePerFrame: {x: 0.25, y: 0, z: 0.25}
   _maxScale: 10
+  castOnSelf: 0
 --- !u!1001 &6357769798305681528
 PrefabInstance:
   m_ObjectHideFlags: 0
