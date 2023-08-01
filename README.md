@@ -1,7 +1,5 @@
 # SpellcasterSurvivor
-Second prototype made for recruiters
-
-Made in less than 90h
+3D Shooter roguelite
 
 Contact : antoine.epiard@yahoo.fr
 
